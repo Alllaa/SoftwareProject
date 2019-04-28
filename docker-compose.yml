@@ -1,0 +1,32 @@
+version: "3.3"
+services:
+    web:
+      image: 7oda/static
+      depends_on:
+        - api
+      ports:
+        - "80:90"
+      links: 
+        - api
+    api:
+      image: 7oda/node-web-app
+      depends_on:
+        - mysql
+      ports:
+        - "7000:5000"
+      links:
+        - mysql
+      command: [ "npm", "start" ]
+
+    mysql:
+      image: mysql/mysql-server:5.7
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: playerground
+        MYSQL_USER: root
+        MYSQL_PASSWORD: root
+      volumes:
+        - ./db-scripts:/docker-entrypoint-initdb.d
+        - ./data/mysql/:/var/lib/mysql
+      expose:
+        - "3306"
